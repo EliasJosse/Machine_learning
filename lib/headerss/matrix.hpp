@@ -1,5 +1,9 @@
-#include <vector>
 
+#ifndef MATRIX_H
+#define MATRIX_H
+
+#include <vector>
+#include <math.h>
 class Matrix
 {
 private:
@@ -46,3 +50,4 @@ public:
     double sum();
 
 };
+#endif

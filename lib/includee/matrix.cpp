@@ -1,5 +1,8 @@
-#include <math.h>
-#include "../headers/matrix.hpp"
+#ifndef MATRIX_C
+#define MATRIX_C
+
+#include "../headerss/matrix.hpp"
+#include <iostream>
 
 Matrix::Matrix(int row, int column){
     rows = row;
@@ -9,7 +12,6 @@ Matrix::Matrix(int row, int column){
     {
         values.push_back(0.0f);
     }
-    printf("constr");
 }
 
 
@@ -21,7 +23,6 @@ Matrix::Matrix(int row, int column, double fillVal){
     {
         values.push_back(fillVal);
     }
-    printf("constr");
 }
 
 Matrix::Matrix(const Matrix& rhs){
@@ -204,14 +205,11 @@ Matrix Matrix::eye(int n){
                 res(r,c) = 0.0f;
         }   
     }
-    printf("out ");
-    
     return res;
 }
 
 
 void Matrix::fill(double val){
-    printf("fill");
     for (size_t r = 0; r < this->rows; r++)
         for (size_t c = 0; c < this->columns; c++)
         {
@@ -222,7 +220,6 @@ void Matrix::fill(double val){
 
 
 Matrix Matrix::trans(){
-    printf("trans1");
     Matrix res(this->columns, this->rows);
 
     for (size_t r = 0; r < this->rows; r++){
@@ -231,7 +228,6 @@ Matrix Matrix::trans(){
             res(c,r) = this->operator()(r,c);
         }   
     }
-    printf("trans2");
     return res;
 
 }
@@ -271,7 +267,7 @@ int Matrix::nrows(){
 }
 
 double Matrix::sum(){
-    double sum;
+    double sum = 0;
     for (size_t r = 0; r < rows; r++)
         for (size_t c = 0; c < columns; c++)
         {
@@ -280,3 +276,5 @@ double Matrix::sum(){
         
     return sum;
 }
+
+#endif

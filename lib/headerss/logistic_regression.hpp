@@ -1,10 +1,11 @@
-#include "../code/matrix.cpp"
+
+#ifndef LOGISTIC_REGRESSION_H
+#define LOGISTIC_REGRESSION_H
+
+#include "../includee/matrix.cpp"
 class logistic_regression
 {
 private:
-
-
-
 
 public:
     //mxn
@@ -26,5 +27,5 @@ public:
     Matrix predict(Matrix test);
 };
 
-
+#endif
 
