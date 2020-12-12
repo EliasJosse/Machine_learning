@@ -75,11 +75,7 @@ int main(){
         for (size_t c = 0; c < X.ncolumns(); c++)
         {
             double val = X(r,c);
-            if(c != 0 && val == 0){
-
-            }
-            else
-            {
+            if( !(c != 0 && val == 0) ){
                 std[c] += pow(X(r,c)-mean[c],2);
             }
         }

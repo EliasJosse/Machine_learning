@@ -277,4 +277,116 @@ double Matrix::sum(){
     return sum;
 }
 
+
+
+//end = 1 add to end / end = 0 add to beginning
+Matrix Matrix::addToColumns(const Matrix& val, int end){
+    if(this->rows != val.rows) printf("ERROR IN addToColumns \n");
+    Matrix res(this->rows,this->columns + val.columns);
+
+
+    //add to end 
+    if(end){
+        for (size_t r = 0; r < res.rows; r++){
+            //copy from this
+            for (size_t c = 0; c < this->columns; c++)
+            {
+                res(r,c) = this->operator()(r,c);
+            }
+            //copy from val
+            for (size_t c = this->columns; c < res.columns; c++)
+            {
+                res(r,c) = val(r,c-(this->columns));
+            }
+        }
+    }
+    //add to beginning
+    else
+    {
+        for (size_t r = 0; r < res.rows; r++){
+            //copy from end
+            for (size_t c = 0; c < val.columns; c++)
+            {
+                res(r,c) = val(r,c);
+            }
+            //copy from this
+            for (size_t c = val.columns; c < res.columns; c++)
+            {
+                res(r,c) = this->operator()(r,c-(val.columns));
+            }
+        }        
+    }
+    
+
+/*
+    this->columns = res.columns;
+    this->rows = res.rows;
+    this->values = res.values;
+
+*/
+    return res;
+
+
+}
+
+//end = 1 add to end / end = 0 add to beginning
+Matrix Matrix::addToRows(const Matrix& val, int end){
+    if(this->columns != val.columns) printf("ERROR IN addToRows \n");
+
+    Matrix res(this->rows + val.rows,this->columns);
+
+
+    //add to end 
+    if(end){
+        //copy from this
+        for (size_t r = 0; r < this->rows; r++){
+            for (size_t c = 0; c < res.columns; c++)
+            {
+                res(r,c) = this->operator()(r,c);
+            }
+  
+        }
+
+        //copy from val
+        for (size_t r = this->rows; r < res.rows; r++){
+            for (size_t c = 0; c < res.columns; c++)
+            {
+                res(r,c) = val(r-(this->rows),c);
+            }
+        }
+
+
+    }
+    //add to beginning
+    else
+    {
+        //copy from val
+        for (size_t r = 0; r < val.rows; r++){
+            for (size_t c = 0; c < res.columns; c++)
+            {
+                res(r,c) = val(r,c);
+            }
+        }
+
+        for (size_t r = val.rows; r < res.rows; r++){
+            //copy from this
+            for (size_t c = 0; c < res.columns; c++)
+            {
+                res(r,c) = this->operator()(r-(val.rows),c);
+            }
+        }
+    }
+
+
+/*
+    this->columns = res.columns;
+    this->rows = res.rows;
+    this->values = res.values;
+
+*/
+    return res;
+}
+
+
+
 #endif

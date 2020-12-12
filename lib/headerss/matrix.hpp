@@ -46,8 +46,10 @@ public:
     int size();
     int nrows();
     int ncolumns();
-
     double sum();
 
+
+    Matrix addToColumns(const Matrix& val, int end);
+    Matrix addToRows(const Matrix& val, int end);
 };
 #endif
