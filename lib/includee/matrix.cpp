@@ -52,7 +52,6 @@ Matrix::Matrix(int n){
 }
 
 Matrix& Matrix::operator=(const Matrix& rhs){
-    printf("operator=");
     if(&rhs == this)
         return *this;
     rows = rhs.rows;
@@ -141,7 +140,7 @@ Matrix Matrix::operator+(const Matrix& val) const {
 
 
 Matrix& Matrix::operator-=(const Matrix& val){
-    if(this->columns != val.columns || this->rows != val.rows) printf("ERROR IN OPERATOR+= \n");
+    if(this->columns != val.columns || this->rows != val.rows) printf("ERROR IN OPERATOR-= \n");
     for (size_t i = 0; i < values.size(); i++)
     {
         values[i] -= val.values[i];
@@ -190,6 +189,22 @@ Matrix Matrix::operator*(const Matrix& val) const{
 
 
 
+}
+
+
+Matrix Matrix::elementMulti(const Matrix& val){
+    if(this->columns != val.columns || this->rows != val.rows) printf("ERROR IN elementMulti \n");
+    Matrix res(val.rows, val.columns);
+    for (size_t r = 0; r < val.rows; r++)
+    {
+        for (size_t c = 0; c < val.columns; c++)
+        {
+            res(r,c) = this->operator()(r,c) * val(r,c);
+        }
+        
+    }
+    return res;
+    
 }
 
 
@@ -386,6 +401,72 @@ Matrix Matrix::addToRows(const Matrix& val, int end){
 */
     return res;
 }
+
+//number of col columns will be put in leftres, remaining in rightres.
+void Matrix::splitColumn(Matrix& leftRes,Matrix& rightRes,int col){
+
+    Matrix left(this->rows, col);
+    Matrix right(this->rows, (this->columns)-col);
+
+
+    for (size_t r = 0; r < this->rows; r++)
+    {
+        for (size_t c = 0; c < col; c++)
+        {
+            left(r,c) = this->operator()(r,c);
+        }
+        for (size_t c = col; c < this->columns; c++)
+        {
+            right(r,c-(col) ) = this->operator()(r,c);
+        }
+    }
+    
+
+
+    leftRes.rows = left.rows;
+    leftRes.columns = left.columns;
+    leftRes.values = left.values;
+
+    rightRes.rows = right.rows;
+    rightRes.columns = right.columns;
+    rightRes.values = right.values;
+
+
+}
+void Matrix::splitRow(Matrix& upperRes,Matrix& lowerRes,int rows){
+
+    Matrix upper(rows, this->columns);
+    Matrix lower((this->rows)-rows, (this->columns));
+
+
+    for (size_t r = 0; r < rows; r++)
+    {
+        for (size_t c = 0; c < this->columns; c++)
+        {
+            upper(r,c) = this->operator()(r,c);
+        }
+
+    }
+
+    for (size_t r = rows; r < this->rows; r++)
+    {
+        for (size_t c = 0; c < this->columns; c++)
+        {
+            lower(r-rows,c) = this->operator()(r,c);
+        }
+    }
+    
+    upperRes.rows = upper.rows;
+    upperRes.columns = upper.columns;
+    upperRes.values = upper.values;
+
+    lowerRes.rows = lower.rows;
+    lowerRes.columns = lower.columns;
+    lowerRes.values = lower.values;
+
+}
+
+
 
 
 

@@ -13,12 +13,16 @@ int main(){
     //per row: 8 features 1 label, seperated by ","
     std::ifstream file("data/data.txt");
     std::string line;
-    int count = 0;
-    int rows = 0;
+
+    const int m = 768;
 
     Matrix X(768,8);
     Matrix Y(768,1);
 
+
+
+    int count = 0;
+    int rows = 0;
     while(file.good()){
         std::getline(file,line);
         std::stringstream ss(line);
@@ -37,7 +41,6 @@ int main(){
         rows++;
     }
    
-
    //features scaling: standardization
 
    //mean and std
@@ -101,10 +104,40 @@ int main(){
     }
 
 
-    X.print(); 
+    Matrix test;
+    Matrix testlab;
+    X.splitRow(X, test, 700);
+    Y.splitRow(Y, testlab, 700);
+
+    
+    logistic_regression lg(X,Y);
+    lg.train(3,0.1f,1.0f);
 
 
 
+
+
+    //new values
+    for (size_t r = 0; r < test.nrows(); r++)
+    {
+        for (size_t c = 0; c < test.ncolumns(); c++)
+        {
+
+            if( !(c != 0 && X(r,c) == 0) ){
+                test(r,c) = (test(r,c) - mean[c])/std[c];
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+    //Matrix res = lg.predict(test);
+    //res.print();
 }
 
 

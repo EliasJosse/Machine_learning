@@ -36,6 +36,8 @@ public:
     Matrix operator-(const Matrix& val) const;
     Matrix& operator*=(const Matrix& val);
     Matrix operator*(const Matrix& val) const;
+
+    Matrix elementMulti(const Matrix& val);
     
     Matrix eye(int n); //identity
     Matrix trans();
@@ -48,8 +50,10 @@ public:
     int ncolumns();
     double sum();
 
-
     Matrix addToColumns(const Matrix& val, int end);
     Matrix addToRows(const Matrix& val, int end);
+
+    void splitColumn(Matrix& leftRes,Matrix& rightRes,int col);
+    void splitRow(Matrix& upperRes,Matrix& lowerRes,int rows);
 };
 #endif
