@@ -110,9 +110,10 @@ int main(){
     Y.splitRow(Y, testlab, 700);
 
     
-    logistic_regression lg(X,Y);
-    lg.train(3,0.1f,1.0f);
+ 
 
+    logistic_regression lgd(X,Y);
+    lgd.train(50,0.002f,0.0001f);
 
 
 
@@ -136,8 +137,9 @@ int main(){
 
 
 
-    //Matrix res = lg.predict(test);
-    //res.print();
+    Matrix res = lgd.predict(test);
+    res.trans().print();
+    testlab.trans().print();
 }
 
 
