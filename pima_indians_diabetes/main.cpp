@@ -43,6 +43,8 @@ int main(){
    
    //features scaling: standardization
 
+
+    
    //mean and std
     std::vector<double> mean(8);
     std::vector<int> nonempty(8);
@@ -104,6 +106,9 @@ int main(){
     }
 
 
+
+    
+
     Matrix test;
     Matrix testlab;
     X.splitRow(X, test, 700);
@@ -113,8 +118,7 @@ int main(){
  
 
     logistic_regression lgd(X,Y);
-    lgd.train(50,0.002f,0.0001f);
-
+    lgd.train(2000,300.0f,400.0f);
 
 
 
@@ -138,8 +142,8 @@ int main(){
 
 
     Matrix res = lgd.predict(test);
-    res.trans().print();
-    testlab.trans().print();
+    double d = res.compare(testlab);
+    printf("accuracy %2.2f", d);
 }
 
 

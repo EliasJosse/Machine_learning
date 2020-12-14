@@ -41,7 +41,7 @@ public:
     
     Matrix eye(int n); //identity
     Matrix trans();
-    Matrix& use(double(*f)(double));
+    Matrix use(double(*f)(double));
 
     void fill(double val);
     void print();
@@ -55,5 +55,7 @@ public:
 
     void splitColumn(Matrix& leftRes,Matrix& rightRes,int col);
     void splitRow(Matrix& upperRes,Matrix& lowerRes,int rows);
+
+    double compare(const Matrix& val);
 };
 #endif

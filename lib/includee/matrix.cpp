@@ -259,12 +259,13 @@ void Matrix::print(){
     }
 }
 
-Matrix& Matrix::use(double(*f)(double)){
-    for(auto& vals : values){
+Matrix Matrix::use(double(*f)(double)){
+    Matrix cp(*this);
+    for(auto& vals : cp.values){
         vals = (*f)(vals);
     }
 
-    return *this;
+    return cp;
 
 }
 
@@ -467,7 +468,22 @@ void Matrix::splitRow(Matrix& upperRes,Matrix& lowerRes,int rows){
 }
 
 
+//compare simalairity between two matrices of same size
+double Matrix::compare(const Matrix& val){
+    if(this->columns != val.columns || this->rows != val.rows) printf("ERROR IN elementMulti \n");
 
+    int simCount = 0;
+    for (size_t r = 0; r < val.rows; r++)
+    {
+        for (size_t c = 0; c < val.columns; c++)
+        {
+            if(this->operator()(r,c) == val(r,c)) simCount++;
+        }
+    }
+    
+    return (1.0f*simCount/this->size()*1.0f);
+
+}
 
 
 #endif

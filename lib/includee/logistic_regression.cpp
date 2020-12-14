@@ -12,14 +12,13 @@ logistic_regression::logistic_regression(Matrix Xx,Matrix Yy)
     m = Xx.nrows();
     n = Xx.ncolumns();
 
-    printf("constr \n");
     //add X0 term
     Matrix Xo(m,1, 1.0f);
     X = X.addToColumns(Xo,0);
     theta = Matrix(1,n+1,0.0f); //1xn
-    printf("constr \n");
-
-
+    // theta(0,0) = -0.2f;
+    // theta(0,1) = 0.1f;
+    // theta(0,2) = 0.2f;
 }
 
 
@@ -36,7 +35,7 @@ double logistic_regression::costJ(double lambda){
     hyp = hyp.use(sigmoid);
     Matrix Yneg = Y*-1.0f;
     Matrix hypneg = hyp*-1.0f;
-    return (1.0f/(double)m)*( ( (Yneg).elementMulti(hyp.use(loga)) ) - ( (Yneg+1.0f).elementMulti( (hypneg+1.0f).use(loga) ) ) ).sum() + lambda/(2.0f*m)*( (theta.use(power2).sum() ));
+    return (1.0f/(double)m)*( ( (Yneg).elementMulti(hyp.use(loga)) ) - ( (Yneg+1.0f).elementMulti( (hypneg+1.0f).use(loga) ) ) ).sum(); + lambda/(2.0f*m)*( (theta.use(power2).sum() ));
 
 }
 
@@ -50,40 +49,43 @@ Matrix logistic_regression::gradients(double lambda){
     hyp = hyp.use(sigmoid);
     Matrix eey(n+1);
     eey(0,0) = 0.0f;
-    Matrix grad = ( (hyp-Y).trans() )*X;
+    Matrix grad = ((hyp-Y).trans()*X)*(1.0f/m);
     Matrix reg = (theta*(lambda/(double)m));
     reg(0,0) = 0.0f;
-    return grad+reg;
+    return (grad+reg);
 
 }
 
 
 void logistic_regression::updateTheta(Matrix gradients, double alpha){
-    theta -= (gradients*alpha);
+    theta = theta - (gradients*alpha);
 }
 
 void logistic_regression::train(int iterations, double alpha, double lambda){
     printf("train \n");
     for (size_t i = 0; i < iterations; i++)
     {
-        //theta.print();
-        //printf("Iteration: %d \n", i);
+        if(i%(iterations/5) == 0){
+            alpha *= 0.1;
+            lambda *= 0.1;
+        }
         double cost = costJ(lambda);
-        //printf("cost: %2.6f \n", cost);
-
+        printf("cost: %2.6f \n", cost);
         updateTheta(gradients(lambda), alpha);
         previosCost = cost;
         
     }
-    printf("Training complete!");
+    printf("Training complete!\n");
     printf("final cost: %2.6f \n", previosCost);
-    
+    printf("final theta: \n");    
     theta.print();
+    //X.print();
+    //Y.trans().print();
 }
 
 
 
-Matrix logistic_regression::predict(Matrix test){
+Matrix logistic_regression::predict(Matrix test ){
 
     Matrix testo(test.nrows(), 1, 1.0f);
 
@@ -92,7 +94,7 @@ Matrix logistic_regression::predict(Matrix test){
 
 
     pred = pred.use(sigmoid);
-    //pred.use(roundd);
+    pred = pred.use(roundd);
 
 
     return pred;
@@ -125,7 +127,7 @@ static double roundd(double val){
 
 static double loga(double val){
 
-    if(val <= 0) return -100.0f;
+    if(val <= 0) return -20.0f;
     else
     {
         return log(val);
