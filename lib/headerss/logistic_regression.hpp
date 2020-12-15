@@ -17,6 +17,7 @@ public:
     int m, n;
     double previosCost;
     logistic_regression(Matrix Xx, Matrix Yy);
+    logistic_regression(Matrix Xx, Matrix Yy, double lowerLim, double higherLim);
 
     ~logistic_regression();
     double costJ(double lambda);

@@ -4,7 +4,6 @@ static double power2(double val);
 static double sigmoid(double val);
 static double roundd(double val);
 static double loga(double val);
-
 logistic_regression::logistic_regression(Matrix Xx,Matrix Yy)
 {
     X = Xx;            //examples mxn
@@ -16,10 +15,24 @@ logistic_regression::logistic_regression(Matrix Xx,Matrix Yy)
     Matrix Xo(m,1, 1.0f);
     X = X.addToColumns(Xo,0);
     theta = Matrix(1,n+1,0.0f); //1xn
-    // theta(0,0) = -0.2f;
-    // theta(0,1) = 0.1f;
-    // theta(0,2) = 0.2f;
+
 }
+
+logistic_regression::logistic_regression(Matrix Xx,Matrix Yy, double lower, double higher)
+{
+    X = Xx;            //examples mxn
+    Y = Yy;            //classes mx1
+    m = Xx.nrows();
+    n = Xx.ncolumns();
+
+    //add X0 term
+    Matrix Xo(m,1, 1.0f);
+    X = X.addToColumns(Xo,0);
+    theta = Matrix(1,n+1,0.0f); //1xn
+    theta.randd(lower,higher);
+
+}
+
 
 
 
@@ -65,10 +78,10 @@ void logistic_regression::train(int iterations, double alpha, double lambda){
     printf("train \n");
     for (size_t i = 0; i < iterations; i++)
     {
-        if(i%(iterations/5) == 0){
-            alpha *= 0.1;
-            lambda *= 0.1;
-        }
+        // if(i%(iterations/5) == 0){
+        //     alpha *= 0.5;
+        //     lambda *= 0.5;
+        // }
         double cost = costJ(lambda);
         printf("cost: %2.6f \n", cost);
         updateTheta(gradients(lambda), alpha);
@@ -77,10 +90,6 @@ void logistic_regression::train(int iterations, double alpha, double lambda){
     }
     printf("Training complete!\n");
     printf("final cost: %2.6f \n", previosCost);
-    printf("final theta: \n");    
-    theta.print();
-    //X.print();
-    //Y.trans().print();
 }
 
 

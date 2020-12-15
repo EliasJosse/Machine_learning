@@ -55,7 +55,8 @@ public:
 
     void splitColumn(Matrix& leftRes,Matrix& rightRes,int col);
     void splitRow(Matrix& upperRes,Matrix& lowerRes,int rows);
-
     double compare(const Matrix& val);
+
+    void randd(double lowerLim,double upperLim);
 };
 #endif

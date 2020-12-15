@@ -41,13 +41,12 @@ int main(){
         rows++;
     }
    
-   //features scaling: standardization
 
 
     
    //mean and std
-    std::vector<double> mean(8);
-    std::vector<int> nonempty(8);
+    std::vector<double> mean = {0,0,0,0,0,0,0,0};
+    std::vector<int> nonempty = {0,0,0,0,0,0,0,0};
    
     //mean
     for (size_t r = 0; r < X.nrows(); r++)
@@ -55,11 +54,7 @@ int main(){
         for (size_t c = 0; c < X.ncolumns(); c++)
         {
             double val = X(r,c);
-            if(c != 0 && val == 0){
-
-            }
-            else
-            {
+            if( !(c != 0 && val == 0)){
                 mean[c] += X(r,c);
                 nonempty[c]++;
             }
@@ -99,7 +94,7 @@ int main(){
         for (size_t c = 0; c < X.ncolumns(); c++)
         {
 
-            if( !(c != 0 && X(r,c) == 0) ){
+            if( !(c != 0 && X(r,c) == 0.0) ){
                 X(r,c) = (X(r,c) - mean[c])/std[c];
             }
         }
@@ -107,8 +102,18 @@ int main(){
 
 
 
-    
+    for(auto val : mean) printf(" %2.2f",val);
+    printf("\n");
 
+
+    for(auto val : std) printf(" %2.2f",val);
+    printf("\n");
+
+    for(auto val : nonempty) printf(" %d",val);
+    printf("\n");
+
+    
+    //test values;
     Matrix test;
     Matrix testlab;
     X.splitRow(X, test, 700);
@@ -117,22 +122,11 @@ int main(){
     
  
 
-    logistic_regression lgd(X,Y);
-    lgd.train(2000,300.0f,400.0f);
+    logistic_regression lga(X,Y);
+    lga.train(100,3.0f,3.0f);
 
-
-
-    //new values
-    for (size_t r = 0; r < test.nrows(); r++)
-    {
-        for (size_t c = 0; c < test.ncolumns(); c++)
-        {
-
-            if( !(c != 0 && X(r,c) == 0) ){
-                test(r,c) = (test(r,c) - mean[c])/std[c];
-            }
-        }
-    }
+    logistic_regression lgb(X,Y,-10.f, 10.f);
+    lgb.train(100,3.0f,3.0f);
 
 
 
@@ -140,10 +134,23 @@ int main(){
 
 
 
+  
 
-    Matrix res = lgd.predict(test);
+
+
+
+    Matrix res = lga.predict(test);
     double d = res.compare(testlab);
+    lga.theta.print();
+    printf("accuracy %2.2f\n", d);
+
+
+    res = lgb.predict(test);
+    d = res.compare(testlab);
+    lgb.theta.print();
     printf("accuracy %2.2f", d);
+
+    
 }
 
 
