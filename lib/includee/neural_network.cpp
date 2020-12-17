@@ -2,6 +2,7 @@
 
 static double power2(double val);
 static double sigmoid(double val);
+static double sigmoidP(double val);
 static double roundd(double val);
 static double loga(double val);
 
@@ -22,7 +23,7 @@ neural_network::neural_network(Matrix X, Matrix Y, int layers, int nodes, int nC
     for (size_t i = 0; i < layers+1; i++)
     {
         if(i == 0)
-            theta.push_back(Matrix(nodes, X.ncolumns()+1);
+            theta.push_back(Matrix(nodes, X.ncolumns()+1));
         else if( i == (layers) )
             theta.push_back(Matrix(ouputs, theta[i-1].ncolumns()+1 ) );
         else
@@ -65,21 +66,23 @@ double neural_network::regulCost(double lambda){
     for (size_t i = 0; i < theta.size(); i++)
     {
         // sum regularization for all thetas
-        res += theta.use(power2).sum();
+        res += theta[i].use(power2).sum();
 
     }
-    res *= lambda/(2.0f*m)
+    res *= lambda/(2.0f*m);
+    return res;
 
 }
 
 Matrix neural_network::hypotheses(){
-    //run through all matrices¨
+    //run through all matrices
     for (size_t i = 0; i < theta.size(); i++)
     {
         z[i] = a[i]*(theta[i].trans());
         a[i + 1] = z[i].use(sigmoid);
         //add a0 column of ones
         if(i < (theta.size()-1) ){    
+            //add column of ones to new a matrix
             Matrix ones(a[i+1].nrows(), 1, 1.0f);
             a[i+1] = a[i+1].addToColumns(ones,0);
         }
@@ -114,16 +117,15 @@ void neural_network::backpropagation(double alpha , double lambda){
         delta[i] = (a[i]*sigma[i])*(1.0f/m);
         //reg
 
-        Matrix reg = lambda*theta[i];
+        Matrix reg = theta[i]*lambda;
         for (size_t r = 0; r < reg.nrows(); r++)
         {
-            reg(i,r) = 0.0f;
+            reg(0,r) = 0.0f;
         }
         
         delta[i] += reg;
 
         //update theta
-
         theta[i] -= (delta[i]*alpha);
     }
     
@@ -140,7 +142,7 @@ void neural_network::train(int iterations , double alpha, double lambda){
         printf("Iteration %d ", i);
         double cost = costJ(lambda);
         printf(" Cost: %2.4f", cost);
-        backpropagation(alpha);
+        backpropagation(alpha, lambda);
 
     }
     printf("Training done!");
@@ -148,25 +150,24 @@ void neural_network::train(int iterations , double alpha, double lambda){
 
 }
 
-Matrix neural_network::predict(const Matrix& testEx){
+Matrix neural_network::predict(Matrix testEx){
     //add zeroes
-
-
-    Matrix a = testEx.addToColumns(Matrix(testEx.nrows,1,1.0f),0);
-    Matrix z;
+    Matrix ones(testEx.nrows(),1,1.0f);
+    Matrix aa = testEx.addToColumns(ones,0);
+    Matrix zz;
     for (size_t i = 0; i < theta.size(); i++)
     {
-        z = a*(theta[i].trans());
-        a = z.use(sigmoid);
+        zz = aa*(theta[i].trans());
+        aa = zz.use(sigmoid);
         //add a0 column of ones
         if(i < (theta.size()-1) ){    
-            Matrix ones(a.nrows(), 1, 1.0f);
-            a = a.addToColumns(ones,0);
+            Matrix ones(aa.nrows(), 1, 1.0f);
+            aa = aa.addToColumns(ones,0);
         }
         
     }
-    //final size of a = M x outputsize
-    return a;
+    //final size of a = M x k
+    return aa;
 
 
 }

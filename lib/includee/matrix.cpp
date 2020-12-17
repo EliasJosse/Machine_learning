@@ -492,7 +492,6 @@ void Matrix::randd(double lowerLim, double upperLim){
     for(auto& val : values){
 
         val = lowerLim + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(upperLim-lowerLim)));
-        printf(" %2.5f ", val);
 
     }
 }

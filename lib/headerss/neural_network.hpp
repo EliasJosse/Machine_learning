@@ -17,16 +17,16 @@ private:
 public:
     neural_network(Matrix X, Matrix Y, int layers,int nodes, int nClasses);
 
-
-    train(int iterations , double alpha, double lambda);
-    double costJ(double alpha, double lambda);
-    Matrix gradient();
-    void backpropagation(double alpha);
-    Matrix hypotheses();
+    double costJ(double lambda);
     double regulCost(double lambda);
-    Matrix predict(const Matrix& testEx);
+    Matrix hypotheses();
+    void backpropagation(double alpha, double lambda);
+    void train(int iterations , double alpha, double lambda);
 
-    
+
+    Matrix predict(Matrix testEx);
+
+
     ~neural_network();
 };
 
