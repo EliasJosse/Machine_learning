@@ -94,7 +94,7 @@ void logistic_regression::train(int iterations, double alpha, double lambda){
 
 
 
-Matrix logistic_regression::predict(Matrix test ){
+Matrix logistic_regression::predict(Matrix test){
 
     Matrix testo(test.nrows(), 1, 1.0f);
 

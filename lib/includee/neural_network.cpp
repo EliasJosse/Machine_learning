@@ -12,16 +12,29 @@ neural_network::neural_network(Matrix X, Matrix Y, int layers, int nodes, int nC
     this->Y = Y;
     inputs = X.ncolumns();
     m = X.nrows();
-    ouputs = nClasses;
-    for (size_t i = 0; i < layers; i++)
+
+    if(ouputs > 2)
+        ouputs = nClasses;
+    else
+        ouputs = 1;
+    this->layers = layers;
+    theta = std::vector<Matrix>();
+    for (size_t i = 0; i < layers+1; i++)
     {
         if(i == 0)
-            theta.push_back(Matrix(inputs, X.ncolumns()+1);
-        else if( i == (layers-1) )
-            theta.push_back(Matrix(ouputs, theta[i-1].nrows()+1 ) );
+            theta.push_back(Matrix(nodes, X.ncolumns()+1);
+        else if( i == (layers) )
+            theta.push_back(Matrix(ouputs, theta[i-1].ncolumns()+1 ) );
         else
-            theta.push_back(Matrix(theta[i-1].ncolumns), nodes+1);
+            theta.push_back(Matrix(nodes+1, theta[i-1].ncolumns()+1));
     }
+
+    a = std::vector<Matrix>(layers+2);
+    z = std::vector<Matrix>(layers+1);
+
+    
+    Matrix ones(X.nrows(), 1, 1.0f);
+    a[0] = X.addToColumns(ones,0);
     
 
 }
@@ -55,36 +68,105 @@ double neural_network::regulCost(double lambda){
         res += theta.use(power2).sum();
 
     }
-    res *= lambda/(2*m)
+    res *= lambda/(2.0f*m)
 
 }
 
 Matrix neural_network::hypotheses(){
     //run through all matrices¨
-    Matrix a = X;
-    Matrix z;
     for (size_t i = 0; i < theta.size(); i++)
     {
-
+        z[i] = a[i]*(theta[i].trans());
+        a[i + 1] = z[i].use(sigmoid);
         //add a0 column of ones
-        Matrix ones(a.nrows(), 1, 1.0f);
-        a = a.addToColumns(ones,0);
-        z = a*theta[i].trans();
-        a = z.use(sigmoid);
+        if(i < (theta.size()-1) ){    
+            Matrix ones(a[i+1].nrows(), 1, 1.0f);
+            a[i+1] = a[i+1].addToColumns(ones,0);
+        }
         
     }
     //final size of a = M x outputsize
-    return a;
+    return a[a.size()-1];
     
 }
 
 
-Matrix neural_network::gradient(double lambda){
+void neural_network::backpropagation(double alpha , double lambda){
 
+    // first sigma
+
+    Matrix yneg = Y*-1.0f;
+    std::vector<Matrix> sigma(layers+1);
+    sigma[layers] = a[a.size()-1]+yneg;
+    for (signed int i = layers-1; i >= 0; i--)
+    {
+        sigma[i] = (sigma[i+1]*theta[layers-i]).elementMulti(z[i]);
+        
+    }
+
+    //for all examples
+    //calc hyp
+
+    std::vector<Matrix> delta(layers+1);
+
+    for (size_t i = 0; i < layers+1; i++)
+    {
+        delta[i] = (a[i]*sigma[i])*(1.0f/m);
+        //reg
+
+        Matrix reg = lambda*theta[i];
+        for (size_t r = 0; r < reg.nrows(); r++)
+        {
+            reg(i,r) = 0.0f;
+        }
+        
+        delta[i] += reg;
+
+        //update theta
+
+        theta[i] -= (delta[i]*alpha);
+    }
+    
+
+    
 
 }
 
-void neural_network::train(double alpha, double lambda){
+void neural_network::train(int iterations , double alpha, double lambda){
+
+
+    for (size_t i = 0; i < iterations; i++)
+    {
+        printf("Iteration %d ", i);
+        double cost = costJ(lambda);
+        printf(" Cost: %2.4f", cost);
+        backpropagation(alpha);
+
+    }
+    printf("Training done!");
+    
+
+}
+
+Matrix neural_network::predict(const Matrix& testEx){
+    //add zeroes
+
+
+    Matrix a = testEx.addToColumns(Matrix(testEx.nrows,1,1.0f),0);
+    Matrix z;
+    for (size_t i = 0; i < theta.size(); i++)
+    {
+        z = a*(theta[i].trans());
+        a = z.use(sigmoid);
+        //add a0 column of ones
+        if(i < (theta.size()-1) ){    
+            Matrix ones(a.nrows(), 1, 1.0f);
+            a = a.addToColumns(ones,0);
+        }
+        
+    }
+    //final size of a = M x outputsize
+    return a;
 
 
 }
@@ -94,6 +176,10 @@ neural_network::~neural_network()
 static double sigmoid(double val){
     return 1.0f/(1.0f+exp(-val));
     // return sigmoid(-val);
+}
+
+static double sigmoidP(double val){
+    return sigmoid(val)*(1-sigmoid(val));
 }
 
 

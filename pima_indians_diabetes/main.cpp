@@ -1,4 +1,4 @@
-#include "../lib/includee/logistic_regression.cpp"
+#include "../lib/includee/neural_network.cpp"
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -100,18 +100,7 @@ int main(){
         }
     }
 
-
-
-    for(auto val : mean) printf(" %2.2f",val);
-    printf("\n");
-
-
-    for(auto val : std) printf(" %2.2f",val);
-    printf("\n");
-
-    for(auto val : nonempty) printf(" %d",val);
-    printf("\n");
-
+    //end of pre-processing
     
     //test values;
     Matrix test;
@@ -119,36 +108,16 @@ int main(){
     X.splitRow(X, test, 700);
     Y.splitRow(Y, testlab, 700);
 
-    
- 
 
-    logistic_regression lga(X,Y);
-    lga.train(100,3.0f,3.0f);
+    neural_network nn(X,Y,2,4,1);
+    nn.train(100,3.0f,3.0f);
 
-    logistic_regression lgb(X,Y,-10.f, 10.f);
-    lgb.train(100,3.0f,3.0f);
-
-
-
-
-
-
-
-  
-
-
-
-
-    Matrix res = lga.predict(test);
+    Matrix res = nn.predict(test);
     double d = res.compare(testlab);
-    lga.theta.print();
     printf("accuracy %2.2f\n", d);
 
 
-    res = lgb.predict(test);
-    d = res.compare(testlab);
-    lgb.theta.print();
-    printf("accuracy %2.2f", d);
+    
 
     
 }
